@@ -1,30 +1,30 @@
-USE Contacts;
+USE Con;
 
 GO
 
-DROP PROCEDURE IF EXISTS dbo.InsertContact;
+DROP PROCEDURE IF EXISTS dbo.InsCon;
 
 GO
 
-CREATE PROCEDURE dbo.InsertContact
+CREATE PROCEDURE dbo.InsCon
 (
- @FirstName				VARCHAR(40),
- @LastName				VARCHAR(40),
- @DateOfBirth			DATE = NULL,
- @AllowContactByPhone	BIT,
- @ContactId				INT OUTPUT
+ @F				VARCHAR(40),
+ @L				VARCHAR(40),
+ @D			DATE = NULL,
+ @A	BIT,
+ @C			INT OUTPUT
 )
 AS
 BEGIN;
 
 SET NOCOUNT ON;
 
-IF NOT EXISTS (SELECT 1 FROM dbo.Contacts
-				WHERE FirstName = @FirstName AND @LastName = LastName
-					AND DateOfBirth = @DateOfBirth)
+IF NOT EXISTS (SELECT 1 FROM dbo.Con
+				WHERE FirstName = @F AND @L = LastName
+					AND DateOfBirth = @D)
  BEGIN;
-	INSERT INTO dbo.Contacts (FirstName, LastName, DateOfBirth, AllowContactByPhone)
-		VALUES (@FirstName, @LastName, @DateOfBirth, @AllowContactByPhone);
+	INSERT INTO dbo.Con (FirstName, LastName, DateOfBirth, AllowContactByPhone)
+		VALUES (@F, @L, @D, @A);
 
 	SELECT @ContactId = SCOPE_IDENTITY();
  END;

@@ -1,44 +1,42 @@
-USE Contacts;
+USE Cont;
 
-DROP PROCEDURE IF EXISTS dbo.InsertContactNotes;
+DROP PROCEDURE IF EXISTS dbo.InsConNo;
 
 GO
 
-CREATE PROCEDURE dbo.InsertContactNotes
+CREATE PROCEDURE dbo.InsConNo
 (
- @ContactId		INT,
- @Notes			ContactNote READONLY
+ @ConId		INT,
+ @No			ConNo READONLY
 )
 AS
 BEGIN;
 
-DECLARE @TempNotes ContactNote;
+DECLARE @TemNot ConNo;
 
-INSERT INTO @TempNotes (Note)
-SELECT Note FROM @Notes;
+INSERT INTO @TemNot (Note)
+SELECT Note FROM @No;
 
-UPDATE @TempNotes SET Note = 'Pre: ' + Note;
+UPDATE @TemNot SET Note = 'Pre: ' + Note;
 
-INSERT INTO dbo.ContactNotes (ContactId, Notes)
-	SELECT @ContactId, Note
-		FROM @Notes;
+INSERT INTO dbo.ConNot (ContactId, Notes)
+	SELECT @ConId, Note
+		FROM @No;
 
-SELECT * FROM dbo.ContactNotes
-	WHERE ContactId = @ContactId
+SELECT * FROM dbo.ConNot
+	WHERE ContactId = @ConId
 ORDER BY NoteId DESC;
 
 END;
 
---test script
+DECLARE @TemNot	ConNo;
 
-DECLARE @TempNotes	ContactNote;
-
-INSERT INTO @TempNotes (Note)
+INSERT INTO @TemNot (Note)
 VALUES
 ('Hi, Peter called.'),
 ('Quick note to let you know Jo wants you to ring her. She rang at 14:30.'),
 ('Terri asked about the quote, I have asked her to ring back tomorrow.');
 
-EXEC dbo.InsertContactNotes
-	@ContactId = 23,
-	@Notes = @TempNotes;
+EXEC dbo.InsConNo
+	@ConId = 23,
+	@No = @TemNot;

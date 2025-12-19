@@ -1,45 +1,43 @@
-USE Contacts;
+USE Con;
 
-DROP PROCEDURE IF EXISTS dbo.InsertContactAddress;
+DROP PROCEDURE IF EXISTS dbo.InsConAdd;
 
 GO
 
-CREATE PROCEDURE dbo.InsertContactAddress
+CREATE PROCEDURE dbo.InsConAdd
 (
- @ContactId		INT,
- @HouseNumber	VARCHAR(200),
- @Street		VARCHAR(200),
- @City			VARCHAR(200),
- @Postcode		VARCHAR(20)
+ @ConId		INT,
+ @HouNum	VARCHAR(200),
+ @Str		VARCHAR(200),
+ @Cit			VARCHAR(200),
+ @Pos		VARCHAR(20)
 )
 AS
 BEGIN;
 
 SET NOCOUNT ON;
 
-DECLARE @AddressId	INT;
+DECLARE @AddId	INT;
 
-SELECT @Street = UPPER(LEFT(@Street, 1)) + LOWER(RIGHT(@Street, LEN(@Street) -1));
-SELECT @City = UPPER(LEFT(@City, 1)) + LOWER(RIGHT(@City, LEN(@City) - 1));
+SELECT @Str = UPPER(LEFT(@Str, 1)) + LOWER(RIGHT(@Str, LEN(@Str) -1));
+SELECT @Cit = UPPER(LEFT(@Cit, 1)) + LOWER(RIGHT(@Cit, LEN(@Cit) - 1));
 
-INSERT INTO dbo.ContactAddresses (ContactId, HouseNumber, Street, City, Postcode)
-	VALUES (@ContactId, @HouseNumber, @Street, @City, @Postcode);
+INSERT INTO dbo.ConAdd (ContactId, HouseNumber, Street, City, Postcode)
+	VALUES (@ConId, @HouNum, @Str, @Cit, @Pos);
 
-SELECT @AddressId = SCOPE_IDENTITY();
+SELECT @AddId = SCOPE_IDENTITY();
 
 SELECT ContactId, AddressId, HouseNumber, Street, City, Postcode
-	FROM dbo.ContactAddresses
-WHERE ContactId = @ContactId;
+	FROM dbo.ConAdd
+WHERE ContactId = @ConId;
 
 SET NOCOUNT OFF;
 
 END;
 
---test script
-
-EXEC dbo.InsertContactAddress
-	@ContactId = 24,
-	@HouseNumber = '10',
-	@Street = 'Downing Street',
-	@City = 'London',
-	@Postcode = 'SW1 2AA';
+EXEC dbo.InsConAdd
+	@ConId = 24,
+	@HouNum = '10',
+	@Str = 'Downing Street',
+	@Cit = 'London',
+	@Pos = 'SW1 2AA';

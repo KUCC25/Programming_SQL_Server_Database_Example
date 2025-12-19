@@ -1,11 +1,11 @@
-USE Contacts;
+USE Con;
 
-DROP TYPE IF EXISTS dbo.ContactNote;
+DROP TYPE IF EXISTS dbo.ConNo;
 
 GO
 
-CREATE TYPE dbo.ContactNote
+CREATE TYPE dbo.ConNo
 AS TABLE
 (
- Note	VARCHAR(MAX) NOT NULL
+ No	VARCHAR(MAX) NOT NULL
 );

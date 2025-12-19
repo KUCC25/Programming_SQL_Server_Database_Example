@@ -1,16 +1,16 @@
-USE Contacts;
+USE Con;
 
-IF EXISTS(SELECT 1 FROM sys.procedures WHERE [name] = 'InsertContactNotes')
+IF EXISTS(SELECT 1 FROM sys.procedures WHERE [name] = 'InsConNo')
  BEGIN;
-	DROP PROCEDURE dbo.InsertContactNotes;
+	DROP PROCEDURE dbo.InsConNo;
  END;
 
 GO
 
-CREATE PROCEDURE dbo.InsertContactNotes
+CREATE PROCEDURE dbo.InsConNo
 (
- @ContactId		INT,
- @Notes			VARCHAR(MAX)
+ @ConId		INT,
+ @No			VARCHAR(MAX)
 )
 AS
 BEGIN;
@@ -34,7 +34,7 @@ WHILE ((SELECT COUNT(*) FROM @NoteTable) > 0)
 
  END;
 
-SELECT * FROM dbo.ContactNotes
+SELECT * FROM dbo.ConNo
 	WHERE ContactId = @ContactId
 ORDER BY NoteId DESC;
 

@@ -1,4 +1,4 @@
-USE Contacts;
+USE Con;
 
 GO
 
@@ -17,5 +17,4 @@ SELECT * FROM dbo.Contacts WHERE FirstName = 'Grace';
 
 END;
 
---Test Script
 EXEC dbo.SelectContacts;

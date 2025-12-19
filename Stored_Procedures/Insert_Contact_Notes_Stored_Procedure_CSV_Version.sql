@@ -1,49 +1,48 @@
-USE Contacts;
+USE Con;
 
-DROP PROCEDURE IF EXISTS dbo.InsertContactNotes;
+DROP PROCEDURE IF EXISTS dbo.InsConNo;
 
 GO
 
-CREATE PROCEDURE dbo.InsertContactNotes
+CREATE PROCEDURE dbo.InsConNo
 (
- @ContactId		INT,
- @Notes			VARCHAR(MAX)
+ @ConId		INT,
+ @No			VARCHAR(MAX)
 )
 AS
 BEGIN;
 
-DECLARE @NoteTable	TABLE (Note	VARCHAR(MAX));
-DECLARE @NoteValue	VARCHAR(MAX);
+DECLARE @NoTab	TABLE (Note	VARCHAR(MAX));
+DECLARE @NoVal	VARCHAR(MAX);
 
-INSERT INTO @NoteTable (Note)
+INSERT INTO @NoTab (Note)
 SELECT value
-	FROM STRING_SPLIT(@Notes, ',');
+	FROM STRING_SPLIT(@No, ',');
 
 DECLARE NoteCursor CURSOR FOR 
-	SELECT Note FROM @NoteTable;
+	SELECT Note FROM @NoTab;
 
 OPEN NoteCursor
-FETCH NEXT FROM NoteCursor INTO @NoteValue;
+FETCH NEXT FROM NoteCursor INTO @NoVal;
 
 WHILE @@FETCH_STATUS = 0
  BEGIN;
-	INSERT INTO dbo.ContactNotes (ContactId, Notes)
-		VALUES (@ContactId, @NoteValue);
+	INSERT INTO dbo.ConNo (ContactId, Notes)
+		VALUES (@ConId, @NoVal);
 
-	FETCH NEXT FROM NoteCursor INTO @NoteValue;
+	FETCH NEXT FROM NoteCursor INTO @NoVal;
 
  END;
 
 CLOSE NoteCursor;
 DEALLOCATE NoteCursor;
 
-SELECT * FROM dbo.ContactNotes
-	WHERE ContactId = @ContactId
+SELECT * FROM dbo.ConNo
+	WHERE ContactId = @ConId
 ORDER BY NoteId DESC;
 
 END;
 
---test script
 DECLARE @TempNotes	ContactNote;
 
 INSERT INTO @TempNotes (Note)
@@ -52,6 +51,6 @@ VALUES
 ('Quick note to let you know Jo wants you to ring her. She rang at 14:30.'),
 ('Terri asked about the quote, I have asked her to ring back tomorrow.');
 
-EXEC dbo.InsertContactNotes
-	@ContactId = 23,
-	@Notes = @TempNotes;
+EXEC dbo.InsConNo
+	@ConId = 23,
+	@No = @TempNotes;

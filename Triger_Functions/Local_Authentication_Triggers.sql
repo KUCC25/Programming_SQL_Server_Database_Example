@@ -1,25 +1,12 @@
 USE master;  
 GO
 
-/*
-  Create a new local login to test LOGON Triggers.
-
-  ONLY do something like this in a local, non-shared environment!
-*/
 CREATE LOGIN login_test WITH PASSWORD = 'abc123!'; 
 GO  
 
-/*
-  Grant them access to see DMVs. There are many better ways to
-  accomplish this in production, but this will work for the demo.
-*/
 GRANT VIEW SERVER STATE TO login_test;  
 GO  
 
-/*
-  Create a LOGON trigger that will limit the number of connections
-  for this specific user. They cannot open more than 2 connections.
-*/
 CREATE OR ALTER TRIGGER LimitConnectionsForUser  
 ON ALL SERVER  
 FOR LOGON  
@@ -32,29 +19,12 @@ IF ORIGINAL_LOGIN()= 'login_test' AND
     ROLLBACK;  
 END;  
 
-
-
-
-
-/***********************************************
- *
- * Create a server-level audit logging database
- *
- **********************************************/ 
-
-/*
-  Create an Audit Log Database for server-level events. This
-  will be owned by my local user for now.
-*/
 CREATE DATABASE AuditLogDB;
 GO
 
 USE AuditLogDB;
 GO
 
-/*
-  Create a table within the new database to store login event data
-*/
 CREATE TABLE LogonEventData
 (
     LogonTime datetime,
@@ -66,19 +36,6 @@ CREATE TABLE LogonEventData
 );
 GO
 
-/*
-  Create a second LOGON Trigger to log information.
-
-  This will be executed each time as the owner of the logging
-  database. Without this, the Trigger would be executed as the
-  CALLER ('test_login' in this case) and it would return an error
-  because they do not have permission to write into that
-  database.
-
-  Much care and thought should be given to how permissions are 
-  used within your environments to protect data and users
-  appropriately.
-*/
 CREATE OR ALTER TRIGGER SuccessfulLogonAudit
 ON ALL SERVER WITH EXECUTE AS 'RYANB-DEV\Ryan' 
 FOR LOGON
@@ -113,18 +70,9 @@ BEGIN
 END
 GO
 
-/*
- Create a new query window and check the log
-*/
 SELECT * FROM AuditLogDB.dbo.LogonEventData
 ORDER BY LogonTime DESC;
 
-
-/*
-  We can reset the order of these Triggers. Because everything is run in 
-  the same transaction, more work would be needed to log attempts that
-  are successful but cross the number of connections limit.
-*/
 sp_settriggerorder @triggername = 'SuccessfulLogonAudit', @order = 'first', 
 	@stmttype = 'LOGON', @namespace = 'SERVER';
 GO
@@ -139,10 +87,6 @@ GO
 
 
 
-
-/*
-  Cleanup
-*/
 
 DROP TRIGGER LimitConnectionsForUser ON ALL SERVER;
 DROP TRIGGER SuccessfulLogonAudit ON ALL SERVER;

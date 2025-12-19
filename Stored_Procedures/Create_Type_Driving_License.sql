@@ -1,8 +1,8 @@
-USE Contacts;
+USE Con;
 
 GO
 
-CREATE TYPE dbo.DrivingLicense
+CREATE TYPE dbo.DriLic
 FROM CHAR(16) NOT NULL;
 
-DROP TYPE dbo.DrivingLicense;
+DROP TYPE dbo.DriLic;

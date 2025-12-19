@@ -1,13 +1,13 @@
-USE Contacts;
+USE Con;
 
-DROP PROCEDURE IF EXISTS dbo.InsertContactRole;
+DROP PROCEDURE IF EXISTS dbo.InsConRo;
 
 GO
 
-CREATE PROCEDURE dbo.InsertContactRole
+CREATE PROCEDURE dbo.InsConRo
 (
- @ContactId	INT,
- @RoleTitle	VARCHAR(200)
+ @ConId	INT,
+ @RoTit	VARCHAR(200)
 )
 AS
 BEGIN;
@@ -18,29 +18,29 @@ BEGIN TRY;
 
 BEGIN TRANSACTION;
 
-	IF NOT EXISTS(SELECT 1 FROM dbo.Roles WHERE RoleTitle = @RoleTitle)
+	IF NOT EXISTS(SELECT 1 FROM dbo.Rol WHERE RoleTitle = @RoTit)
 	 BEGIN;
-		INSERT INTO dbo.Roles (RoleTitle)
-			VALUES (@RoleTitle);
+		INSERT INTO dbo.Rol (RoleTitle)
+			VALUES (@RoTit);
 	 END;
 
-	SELECT @RoleId = RoleId FROM dbo.Roles WHERE RoleTitle = @RoleTitle;
+	SELECT @RoleId = RoleId FROM dbo.Rol WHERE RoleTitle = @RoTit;
 
-	IF NOT EXISTS(SELECT 1 FROM dbo.ContactRoles WHERE ContactId = @ContactId AND RoleId = @RoleId)
+	IF NOT EXISTS(SELECT 1 FROM dbo.C WHERE ContactId = @ConId AND RoleId = @RoleId)
 	 BEGIN;
-		INSERT INTO dbo.ContactRoles (ContactId, RoleId)
-			VALUES (@ContactId, @RoleId);
+		INSERT INTO dbo.C (ContactId, RoleId)
+			VALUES (@ConId, @RoleId);
 	 END;
 
 COMMIT TRANSACTION;
 	
 SELECT	C.ContactId, C.FirstName, C.LastName, R.RoleTitle
 	FROM dbo.Contacts C
-		INNER JOIN dbo.ContactRoles CR
+		INNER JOIN dbo.C CR
 			ON C.ContactId = CR.ContactId
-		INNER JOIN dbo.Roles R
+		INNER JOIN dbo.Rol R
 			ON CR.RoleId = R.RoleId
-WHERE C.ContactId = @ContactId;
+WHERE C.ContactId = @ConId;
 
 END TRY
 BEGIN CATCH;
@@ -56,11 +56,10 @@ RETURN 0;
 
 END;
 
---test script
 DECLARE @RetVal INT;
 
-EXEC @RetVal = dbo.InsertContactRole 
-	@ContactId = 22,
-	@RoleTitle = 'Actor';
+EXEC @RetVal = dbo.InsConRo 
+	@ConId = 22,
+	@RoTit = 'Actor';
 
 PRINT 'RetVal = ' + CONVERT(VARCHAR(10), @RetVal);
